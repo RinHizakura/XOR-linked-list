@@ -1,14 +1,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-
-typedef struct __list list;
-struct __list {
-    int data;
-    struct __list *addr;
-};
-
-#define XOR(a, b) ((list *) ((uintptr_t) (a) ^ (uintptr_t) (b)))
+#include "XOR_list.h"
 
 void insert_node(list **l, int d) {
     list *tmp = malloc(sizeof(list));
@@ -33,7 +26,55 @@ void delete_list(list *l) {
     }
 }
 
-list *sort(list *start)
+
+void insertion_sort(list **start){
+   if(!(*start) || !((*start)->addr)) 
+   	return;
+
+   list *target_prev = NULL;
+   list *target = (*start);
+   list *target_next = (*start)->addr;
+
+   while(target != NULL){
+   	int value = target->data;
+	int found = 0;
+	
+        list *prev = NULL;	
+	list *tmp = *start;
+   	list *next = (*start)->addr;  
+   	while(tmp != target){
+		if(target->data < tmp->data && found == 0){
+			value = tmp->data;
+			tmp->data = target->data;
+			
+			prev = tmp;
+			tmp = next;
+			if(next)
+				next = XOR(next->addr, prev);
+
+			found = 1;
+		}
+		else{
+			if(found == 1){
+				XORSWAP_UNSAFE(value,tmp->data);
+			}
+			prev = tmp;
+			tmp = next;
+			if(next)
+				next = XOR(next->addr, prev);
+		}
+	}
+	tmp->data = value;
+			
+	target_prev = target;
+	target = target_next;
+	if(target_next)
+		target_next = XOR(target_next->addr, target_prev);
+   }   
+}
+
+
+list *merge_sort(list *start)
 {
     if (!start || !start->addr)
         return start;
@@ -42,8 +83,8 @@ list *sort(list *start)
     left->addr = NULL;
     right->addr = XOR(right->addr, left);
 
-    left = sort(left);
-    right = sort(right);
+    left = merge_sort(left);
+    right = merge_sort(right);
 
     for (list *merge = NULL; left || right;) {
         if (!right || (left && left->data < right->data)) {
@@ -80,33 +121,17 @@ list *sort(list *start)
     return start;
 }
 
-void list_print(list *l)
+void dump_list(list *l)
 {
-    printf("%d ",l->data);
     list *next = l->addr;
     list *prev = NULL;
 
-    while (next != NULL) {
-        printf("%d ",next->data);
+    while (l != NULL) {
+        printf("%d ",l->data);
 	prev = l;
 	l = next;
-        next = XOR(next->addr, prev); 
+	if(next)
+        	next = XOR(next->addr, prev); 
     }
     printf("\n");
-}
-
-int main(){
-    list *l = NULL;
-    insert_node(&l, 5);
-    insert_node(&l, 3);
-    insert_node(&l, 10);
-    insert_node(&l, 1);
-        
-    
-    printf("Before: "); 
-    list_print(l);
-    l = sort(l);
-    printf("After: "); 
-    list_print(l);
-    delete_list(l);
 }
