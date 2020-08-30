@@ -1,9 +1,10 @@
+#include "XOR_list.h"
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "XOR_list.h"
 
-void insert_node(list **l, int d) {
+void insert_node(list **l, int d)
+{
     list *tmp = malloc(sizeof(list));
     tmp->data = d;
 
@@ -16,61 +17,60 @@ void insert_node(list **l, int d) {
     *l = tmp;
 }
 
-void delete_list(list *l) {
-    while (l) {
-        list *next = l->addr;
+void delete_list(list **l)
+{
+    while (*l) {
+        list *next = (*l)->addr;
         if (next)
-            next->addr = XOR(next->addr, l);
-        free(l);
-        l = next;
+            next->addr = XOR(next->addr, *l);
+        free(*l);
+        *l = next;
     }
 }
 
 
-void insertion_sort(list **start){
-   if(!(*start) || !((*start)->addr)) 
-   	return;
+list *insertion_sort(list *start)
+{
+    if (!start || !(start->addr))
+        return start;
 
-   list *target_prev = NULL;
-   list *target = (*start);
-   list *target_next = (*start)->addr;
+    // take out the head node and make it a new list
+    list *result = start;
+    start = start->addr;
+    start->addr = XOR(result, start->addr);
+    result->addr = NULL;
 
-   while(target != NULL){
-   	int value = target->data;
-	int found = 0;
-	
-        list *prev = NULL;	
-	list *tmp = *start;
-   	list *next = (*start)->addr;  
-   	while(tmp != target){
-		if(target->data < tmp->data && found == 0){
-			value = tmp->data;
-			tmp->data = target->data;
-			
-			prev = tmp;
-			tmp = next;
-			if(next)
-				next = XOR(next->addr, prev);
+    while (start) {
+        list *tmp = start->addr;
+        if (tmp)
+            tmp->addr = XOR(tmp->addr, start);
 
-			found = 1;
-		}
-		else{
-			if(found == 1){
-				XORSWAP_UNSAFE(value,tmp->data);
-			}
-			prev = tmp;
-			tmp = next;
-			if(next)
-				next = XOR(next->addr, prev);
-		}
-	}
-	tmp->data = value;
-			
-	target_prev = target;
-	target = target_next;
-	if(target_next)
-		target_next = XOR(target_next->addr, target_prev);
-   }   
+        list *cur = result;
+        list *prev = NULL;
+        list *next = result->addr;
+
+        while (cur && cur->data < start->data) {
+            prev = cur;
+            cur = next;
+            if (next)
+                next = XOR(next->addr, prev);
+        }
+
+
+        /* insert in between prev and cur */
+        if (prev)
+            prev->addr = XOR(XOR(prev->addr, cur), start);
+        // if insert at head, change which result point to
+        else
+            result = start;
+
+        if (cur)
+            cur->addr = XOR(start, next);
+
+        start->addr = XOR(prev, cur);
+        start = tmp;
+    }
+    return result;
 }
 
 
@@ -127,11 +127,11 @@ void dump_list(list *l)
     list *prev = NULL;
 
     while (l != NULL) {
-        printf("%d ",l->data);
-	prev = l;
-	l = next;
-	if(next)
-        	next = XOR(next->addr, prev); 
+        printf("%d ", l->data);
+        prev = l;
+        l = next;
+        if (next)
+            next = XOR(next->addr, prev);
     }
     printf("\n");
 }

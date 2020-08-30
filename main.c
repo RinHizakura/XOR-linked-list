@@ -1,19 +1,18 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "XOR_list.h"
 
-int main(){
+int main()
+{
     list *l = NULL;
-    insert_node(&l, 5); 
-    insert_node(&l, 3); 
-    insert_node(&l, 10);
-    insert_node(&l, 1); 
-    
-    
-    printf("Before: "); 
-    dump_list(l);
-    insertion_sort(&l);
-    printf("After: "); 
-    dump_list(l);
-    delete_list(l);
-}
+    for (int i = 0; i < 50; i++) { /* generate random list */
+        insert_node(&l, (rand() % 100));
+    }
 
+    printf("Before: ");
+    dump_list(l);
+    l = insertion_sort(l);
+    printf("After: ");
+    dump_list(l);
+    delete_list(&l);
+}
