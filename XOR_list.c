@@ -123,9 +123,14 @@ list *merge_sort(list *start)
     if (!start || !start->addr)
         return start;
 
-
+#ifdef SLOW
+    list *left = start, *right = start->addr;
+    left->addr = NULL;
+    right->addr = XOR(right->addr, left);
+#else
     list *left = NULL, *right = NULL;
     FrontBackSplit(start, &left, &right);
+#endif
 
     left = merge_sort(left);
     right = merge_sort(right);

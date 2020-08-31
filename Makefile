@@ -2,6 +2,11 @@ COPS = -Wall -Wextra -Werror
 GIT_HOOKS := .git/hooks/applied
 BUILD_DIR = build
 
+ifeq ("$(SLOW)","1")
+	COPS += -DSLOW
+endif
+
+
 all: $(GIT_HOOKS) exec
 clean: 
 	rm -rf $(BUILD_DIR) exec
@@ -14,7 +19,7 @@ $(GIT_HOOKS):
 # '<' for current dependency, '@' for current target
 $(BUILD_DIR)/%.o: %.c
 	mkdir -p $(@D)
-	gcc -g -c $< -o $@ 
+	gcc $(COPS) -g -c $< -o $@ 
 
 C_FILES = $(wildcard *.c)
 OBJ_FILES = $(C_FILES:%.c=$(BUILD_DIR)/%.o)
