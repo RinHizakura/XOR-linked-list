@@ -74,46 +74,47 @@ list *insertion_sort(list *start)
 }
 
 
-void FrontBackSplit(list *head, list **front_ref, list **back_ref){
-	if(head == NULL || head->addr == NULL){
-		*front_ref = head;
-		*back_ref = NULL;
-		return;
-	}
+void FrontBackSplit(list *head, list **front_ref, list **back_ref)
+{
+    if (head == NULL || head->addr == NULL) {
+        *front_ref = head;
+        *back_ref = NULL;
+        return;
+    }
 
- 	list *slow_prev = NULL;
-	list *slow = head;
-	list *slow_next = head->addr;
-	
-	list *fast_prev = head;
-	list *fast = head->addr;
-	list *fast_next = XOR(fast->addr, fast_prev);
+    list *slow_prev = NULL;
+    list *slow = head;
+    list *slow_next = head->addr;
+
+    list *fast_prev = head;
+    list *fast = head->addr;
+    list *fast_next = XOR(fast->addr, fast_prev);
 
 
-	while(fast != NULL){
-		fast_prev = fast;
-		fast = fast_next;
-		if(fast_next)
-			fast_next = XOR(fast_next->addr,fast_prev);
+    while (fast != NULL) {
+        fast_prev = fast;
+        fast = fast_next;
+        if (fast_next)
+            fast_next = XOR(fast_next->addr, fast_prev);
 
-		if(fast !=NULL){
-			slow_prev = slow;
-			slow = slow_next;
-			if(slow_next)
-				slow_next = XOR(slow_next->addr, slow_prev);
-			
-			fast_prev = fast;
-			fast = fast_next;
-			if(fast_next)
-				fast_next = XOR(fast_next->addr,fast_prev);
-		}
-	}
+        if (fast != NULL) {
+            slow_prev = slow;
+            slow = slow_next;
+            if (slow_next)
+                slow_next = XOR(slow_next->addr, slow_prev);
 
-	*front_ref = head;
-	*back_ref = slow_next;
-	
-	slow_next->addr = XOR(slow_next->addr,slow);
-	slow->addr = slow_prev;
+            fast_prev = fast;
+            fast = fast_next;
+            if (fast_next)
+                fast_next = XOR(fast_next->addr, fast_prev);
+        }
+    }
+
+    *front_ref = head;
+    *back_ref = slow_next;
+
+    slow_next->addr = XOR(slow_next->addr, slow);
+    slow->addr = slow_prev;
 }
 
 
@@ -125,7 +126,7 @@ list *merge_sort(list *start)
 
     list *left = NULL, *right = NULL;
     FrontBackSplit(start, &left, &right);
-    
+
     left = merge_sort(left);
     right = merge_sort(right);
 

@@ -5,11 +5,11 @@
 int main()
 {
     list *l = NULL;
-    
-    for (int i = 0; i < 50; i++) { 
+
+    for (int i = 0; i < 50; i++) {
         insert_node(&l, (rand() % 100));
     }
-    
+
 
     printf("Before: ");
     dump_list(l);
