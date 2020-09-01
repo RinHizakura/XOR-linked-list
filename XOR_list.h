@@ -1,7 +1,7 @@
 #ifndef XOR_LIST_H
 #define XOR_LIST_H
 
-
+#define THR 64
 #define XOR(a, b) ((list *) ((uintptr_t)(a) ^ (uintptr_t)(b)))
 #define XORSWAP_UNSAFE(a, b) ((a) ^= (b), (b) ^= (a), (a) ^= (b))
 
@@ -16,6 +16,4 @@ void delete_list(list **l);
 list *insertion_sort(list *start);
 list *merge_sort(list *start, int cnt);
 void dump_list(list *l);
-
-extern int THR;
 #endif

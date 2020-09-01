@@ -20,22 +20,27 @@ def stat(data):
 
     return ret
 
-utime_collect = []
+old_time_collect = []
+new_time_collect = []
+
 
 for i in range(50):
-    os.system("./exec > ./plot/THR.txt")
-    out = np.loadtxt("./plot/THR.txt", dtype = 'float',delimiter=',')
+    os.system("./exec > ./plot/out.txt")
+    out = np.loadtxt("./plot/out.txt", dtype = 'float',delimiter=',')
   
-    utime_collect.append(out[:,1])
+    old_time_collect.append(out[:,1])
+    new_time_collect.append(out[:,2])
 
 x = out[:,0]
-utime_collect = stat(utime_collect)
+old_time_collect = stat(old_time_collect)
+new_time_collect = stat(new_time_collect)
 
 
 plt.plot()
-plt.xlabel('threshold')
-plt.ylabel('time(ms)')
+plt.xlabel('node #')
+plt.ylabel('time(ns)')
 
-plt.plot(x, utime_collect, marker = '*', markersize = 3)
-plt.axhline(y=utime_collect[0], color='r', linestyle='-')
+plt.plot(x, old_time_collect, label = 'old')
+plt.plot(x, new_time_collect, label = 'new')
+plt.legend(loc = 'upper left')
 plt.show()
