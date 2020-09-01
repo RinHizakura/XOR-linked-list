@@ -118,7 +118,7 @@ void FrontBackSplit(list *head, list **front_ref, list **back_ref)
 }
 
 
-list *merge_sort(list *start)
+list *merge_sort(list *start, int cnt)
 {
     if (!start || !start->addr)
         return start;
@@ -132,8 +132,13 @@ list *merge_sort(list *start)
     FrontBackSplit(start, &left, &right);
 #endif
 
-    left = merge_sort(left);
-    right = merge_sort(right);
+    if ((cnt >> 1) > THR) {
+        left = merge_sort(left, (cnt >> 1) + (cnt & 1));
+        right = merge_sort(right, cnt >> 1);
+    } else {
+        left = insertion_sort(left);
+        right = insertion_sort(right);
+    }
 
 
     for (list *merge = NULL; left || right;) {

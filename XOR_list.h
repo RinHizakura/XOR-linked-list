@@ -14,7 +14,8 @@ struct __list {
 void insert_node(list **l, int d);
 void delete_list(list **l);
 list *insertion_sort(list *start);
-list *merge_sort(list *start);
+list *merge_sort(list *start, int cnt);
 void dump_list(list *l);
 
+extern int THR;
 #endif
